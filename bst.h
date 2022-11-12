@@ -247,7 +247,8 @@ protected:
     virtual void nodeSwap( Node<Key,Value>* n1, Node<Key,Value>* n2) ;
 
     // Add helper functions here
-
+    virtual void deleteNode (Node<Key, Value> * del);
+    virtual void checkDepth (Node<Key, Value> * node)
 
 protected:
     Node<Key, Value>* root_;
@@ -362,7 +363,7 @@ template<typename Key, typename Value>
 BinarySearchTree<Key, Value>::~BinarySearchTree()
 {
     // TODO
-
+    clear();
 }
 
 /**
@@ -445,6 +446,15 @@ template<class Key, class Value>
 void BinarySearchTree<Key, Value>::insert(const std::pair<const Key, Value> &keyValuePair)
 {
     // TODO
+    if (internalFind(key) == NULL){
+      //search for proper parent
+      //if parent has child set child's parent to inserted node
+        //set inserted's parent
+
+    }
+    //if key already exists
+    else internalFind(key)->Value == keyValuePair->Value;
+    
 }
 
 
@@ -457,6 +467,22 @@ template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::remove(const Key& key)
 {
     // TODO
+    //check if node exists
+    if (internalFind(key) != NULL){
+      //check if node left child
+      if (internalFind(key)->getLeft != NULL){
+        while(predecessor(internalFind(key)) != NULL);
+          swapNode(internalFind(key), predecessor(internalFind(key)));
+      }
+      //if node only has right child
+      else if (internalFind(key)->getRight !=NULL){
+        while(internalFind(key)->getRight != NULL){
+          swapNode(internalFind(key), internalFind(key)->getRight);
+        }
+      }
+      //delete node
+      delete internalFind(key);
+    }
 }
 
 
@@ -466,6 +492,8 @@ Node<Key, Value>*
 BinarySearchTree<Key, Value>::predecessor(Node<Key, Value>* current)
 {
     // TODO
+    Node<Key, Value> pred = current->getLeft;
+    return pred;
 }
 
 
@@ -477,6 +505,18 @@ template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::clear()
 {
     // TODO
+    if (empty()) return;
+    deleteBST(root_);
+}
+
+//my helper function for clear
+template<typename Key, typename Value>
+void BinarySearchTree<Key, Value>::deleteBST(Node<Key, Value> * node)
+{
+    if (node == NULL) return;
+    deleteBST(node->getLeft);
+    deleteBST(node->getRight);
+    delete node;
 }
 
 
@@ -488,6 +528,12 @@ Node<Key, Value>*
 BinarySearchTree<Key, Value>::getSmallestNode() const
 {
     // TODO
+    Node<Key, Value> temp = root_;
+    while (temp->getLeft != NULL){
+      temp = temp->getLeft;
+    }
+    return internalFind(temp->Key);
+    
 }
 
 /**
@@ -499,6 +545,12 @@ template<typename Key, typename Value>
 Node<Key, Value>* BinarySearchTree<Key, Value>::internalFind(const Key& key) const
 {
     // TODO
+    Node<Key, Value> temp = root_
+    while(key != temp->getKey){
+      if (key < temp->getKey) temp = temp->getLeft;
+      else temp = temp->getRight;
+    }
+    return temp;
 }
 
 /**
@@ -508,8 +560,30 @@ template<typename Key, typename Value>
 bool BinarySearchTree<Key, Value>::isBalanced() const
 {
     // TODO
+    int depthL = 0;
+    int depthR = 0;
+    return checkDepth(root_, depthL, depthR);
+    
 }
 
+template<typename Key, typename Value>
+bool BinarySearchTree<Key, Value>::checkDepth(Node<Key, Value> *node, depthL, depthR)
+{
+    while(node != NULL){ 
+      checkDepth(node->getLeft);
+      if (node->getLeft != NULL) depthL += 1;
+      checkDepth(node->getRight);
+      if (node->getRight != NULL) depthR += 1;
+    }
+    if (depthL - depthR >=-1 && depthL - depthR <= 1){
+      depthL--;
+      depthR--;
+      return true;
+    }
+  
+    return false;
+    
+}
 
 
 template<typename Key, typename Value>
